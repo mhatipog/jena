@@ -1,5 +1,5 @@
 # Temporary CI for GH-4297. Kept on a separate branch so the upstream PR contains only the fix and tests.
-name: GH-4297 ARQ regression validation
+name: GH-4297 full ARQ regression validation
 on:
   push:
     branches:
@@ -28,10 +28,10 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Targeted ARQ expression regressions
+      - name: Full ARQ and reactor dependency tests
         shell: bash
         run: |
           set -euo pipefail
           java -version
           mvn -version
-          mvn -B -ntp -pl :jena-arq -am -Dtest=TestExpressions2,TestNodeValue -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.javadoc.skip=true test
+          mvn -B -ntp -pl :jena-arq -am -Dmaven.javadoc.skip=true test
