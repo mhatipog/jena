@@ -1,0 +1,37 @@
+# Temporary CI for GH-4297. Kept on a separate branch so the upstream PR contains only the fix and tests.
+name: GH-4297 ARQ regression validation
+on:
+  push:
+    branches:
+      - ci/gh-4297-validation
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gh-4297-targeted-arq
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact proposed fix
+        uses: actions/checkout@v4
+        with:
+          repository: mhatipog/jena
+          ref: 14abec3ff1852046dc6eeee3fa36e41cba17471b
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Set up Java 21 and Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Targeted ARQ expression regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          java -version
+          mvn -version
+          mvn -B -ntp -pl :jena-arq -am -Dtest=TestExpressions2,TestNodeValue -Dsurefire.failIfNoSpecifiedTests=false -Dmaven.javadoc.skip=true test
