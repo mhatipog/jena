@@ -113,6 +113,17 @@ public class TestSPARQLKeywordFunctions
     @Test public void round_13()  { test("round('-0'^^xsd:float)",      "'-0.0'^^xsd:float"); }
     @Test public void round_14()  { test("round('-0'^^xsd:double)",     "'-0.0e0'^^xsd:double"); }
 
+    // Floating-point numbers above the integer precision limit are already integral.
+    // Narrowing through Math.round must not saturate them to int/long bounds.
+    @Test public void round_20()  { test("round(1e20) = 1e20", kwTRUE); }
+    @Test public void round_21()  { test("round(-1e20) = -1e20", kwTRUE); }
+    @Test public void round_22()  { test("round(1e40) = 1e40", kwTRUE); }
+    @Test public void round_23()  { test("round(-1e40) = -1e40", kwTRUE); }
+    @Test public void round_24()  { test("round('1.0E20'^^xsd:float) = '1.0E20'^^xsd:float", kwTRUE); }
+    @Test public void round_25()  { test("round('-1.0E20'^^xsd:float) = '-1.0E20'^^xsd:float", kwTRUE); }
+    @Test public void round_26()  { test("round('1.0E10'^^xsd:float) = '1.0E10'^^xsd:float", kwTRUE); }
+    @Test public void round_27()  { test("round('-1.0E10'^^xsd:float) = '-1.0E10'^^xsd:float", kwTRUE); }
+
     // ABS
     @Test public void abs_01()    { test("abs(1)",        "1"); }
     @Test public void abs_02()    { test("abs(1.0)",      "1.0"); }

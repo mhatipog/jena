@@ -444,6 +444,10 @@ public class XSDFuncOp
             return d;
         if ( d == -0.0e0 )
             return d;
+        // All doubles at or above 2^52 in magnitude are integral already.
+        // Math.round would narrow large values to a saturated long.
+        if ( Math.abs(d) >= 0x1.0p52 )
+            return d;
         // Math.round returns a java long
         long resultLong = Math.round(d);
         if ( resultLong == 0 && d < 0 )
@@ -462,13 +466,15 @@ public class XSDFuncOp
             return f;
         if ( f == -0.0e0f )
             return f;
-        // Math.round returns a java long
-        long resultLong = Math.round(f);
-        if ( resultLong == 0 && f < 0 )
+        // All floats at or above 2^23 in magnitude are integral already.
+        // Math.round(float) would narrow larger values to a saturated int.
+        if ( Math.abs(f) >= 0x1.0p23f )
+            return f;
+        int resultInt = Math.round(f);
+        if ( resultInt == 0 && f < 0 )
             // Return -0 for round negative to 0.
             return -0.0e0f;
-        // Math.round returns a java long, which is cast to float by the return.
-        return resultLong;
+        return resultInt;
     }
 
     // The following function 'roundXpath3' implements the definition for "fn:round" in F&O v3.
